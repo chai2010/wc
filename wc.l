@@ -7,6 +7,7 @@
 %option noyywrap
 
 %{
+#include "lex.h"
 #include "wc.h"
 
 #include <string.h>

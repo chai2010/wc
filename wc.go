@@ -7,6 +7,7 @@
 // just like Unix wc
 package main
 
+//#include "lex.h"
 //#include "wc.h"
 import "C"
 import "fmt"

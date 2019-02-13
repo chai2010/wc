@@ -6,8 +6,6 @@
 extern int chars;
 extern int words;
 extern int lines;
-
-extern int yylex(void);
 ```
 
 创建`wc.c`文件, 保护变量的定义并初始化为0值:
@@ -20,12 +18,19 @@ int words = 0;
 int lines = 0;
 ```
 
-最重要的是`yylex`函数, 可以用flex工具生成. 创建`wc.l`文件:
+最重要的是`yylex`函数在`lex.h`文件声明, 函数的实现由flex工具生成:
+
+```c
+extern int yylex(void);
+```
+
+创建`wc.l`文件:
 
 ```flex
 %option noyywrap
 
 %{
+#include "lex.h"
 #include "wc.h"
 %}
 
@@ -49,6 +54,7 @@ $ flex wc.l
 ```go
 package main
 
+//#include "lex.h"
 //#include "wc.h"
 import "C"
 import "fmt"
