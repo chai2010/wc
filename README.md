@@ -150,3 +150,5 @@ func main() {
 	fmt.Printf("%8d%8d%8d\n", C.lines, C.words, C.chars)
 }
 ```
+
+在调用`C.wc_yylex`函数之前调用`C.wc_yy_scan_bytes`函数用Go语言的切片初始化词法扫描的缓冲区。
