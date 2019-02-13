@@ -105,13 +105,6 @@ void wc_yy_scan_bytes(const void* p, int len) {
 然后调整Go语言函数：
 
 ```go
-// Copyright 2019 <chaishushan{AT}gmail.com>. All rights reserved.
-// Use of this source code is governed by a Apache
-// license that can be found in the LICENSE file.
-
-//go:generate flex wc.l
-
-// just like Unix wc
 package main
 
 //#include "lex.h"
