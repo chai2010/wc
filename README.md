@@ -71,3 +71,89 @@ func main() {
 $ cat wc.l | go run .
       19      47     355
 ```
+
+## 从内存读取数据
+
+flex生成的代码导出了`yyin`和`yyout`全局变量，可以用于指定打开的输入流文件（否则从标准输入读取）：
+
+```c
+extern FILE *yyin, *yyout;
+``
+
+不过以上的是C语言文件接口，在Go语言中使用比较麻烦。此外flex还生成了以下三个函数：
+
+```c
+YY_BUFFER_STATE yy_scan_buffer (char *base,yy_size_t size  );
+YY_BUFFER_STATE yy_scan_string (yyconst char *yy_str  );
+YY_BUFFER_STATE yy_scan_bytes (yyconst char *bytes,yy_size_t len  );
+```
+
+因为flex生成的函数在`lex.yy.c`文件，在Go语言中无法直接使用。可以通过自定义函数导出：
+
+```c
+// lex.h
+extern void wc_yy_scan_bytes(const void* p, int len);
+```
+
+```flex
+// wc.l
+void wc_yy_scan_bytes(const void* p, int len) {
+	yy_scan_bytes(p, len);
+}
+```
+
+然后调整Go语言函数：
+
+```go
+// Copyright 2019 <chaishushan{AT}gmail.com>. All rights reserved.
+// Use of this source code is governed by a Apache
+// license that can be found in the LICENSE file.
+
+//go:generate flex wc.l
+
+// just like Unix wc
+package main
+
+//#include "lex.h"
+//#include "wc.h"
+import "C"
+import (
+	"flag"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"os"
+)
+
+var (
+	flagInput = flag.String("f", "", "set input file")
+)
+
+func main() {
+	flag.Parse()
+
+	var (
+		content []byte
+		err     error
+	)
+
+	if *flagInput == "" {
+		// cat wc.go | go run .
+		content, err = ioutil.ReadAll(os.Stdin)
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		// go run . -f wc.go
+		content, err = ioutil.ReadFile(*flagInput)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	C.wc_yy_scan_bytes(C.CBytes(content), C.int(len(content)))
+	C.wc_yylex()
+
+	fmt.Printf("%8d%8d%8d\n", C.lines, C.words, C.chars)
+}
+```
