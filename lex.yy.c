@@ -1748,3 +1748,11 @@ void yyfree (void * ptr )
 
 
 
+void wc_yy_scan_bytes(const void* p, int len) {
+	yy_scan_bytes(p,len);
+}
+
+int wc_yylex(void) {
+	return yylex();
+}
+

@@ -10,9 +10,42 @@ package main
 //#include "lex.h"
 //#include "wc.h"
 import "C"
-import "fmt"
+import (
+	"flag"
+	"fmt"
+	"io/ioutil"
+	"log"
+	"os"
+)
+
+var (
+	flagInput = flag.String("f", "", "set input file")
+)
 
 func main() {
-	C.yylex()
+	flag.Parse()
+
+	var (
+		content []byte
+		err     error
+	)
+
+	if *flagInput == "" {
+		// cat wc.go | go run .
+		content, err = ioutil.ReadAll(os.Stdin)
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		// go run . -f wc.go
+		content, err = ioutil.ReadFile(*flagInput)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	C.wc_yy_scan_bytes(C.CBytes(content), C.int(len(content)))
+	C.wc_yylex()
+
 	fmt.Printf("%8d%8d%8d\n", C.lines, C.words, C.chars)
 }

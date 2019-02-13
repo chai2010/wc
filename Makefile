@@ -3,7 +3,9 @@
 # license that can be found in the LICENSE file.
 
 run: lex.yy.c
-	cat wc.l | go run .
+	@go fmt
+	@go vet
+	go run .
 
 lex.yy.c: wc.l
 	flex wc.l
