@@ -8,6 +8,8 @@
 
 %{
 #include "wc.h"
+
+#include <string.h>
 %}
 
 %%

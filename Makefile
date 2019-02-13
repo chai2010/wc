@@ -5,7 +5,7 @@
 run: lex.yy.c
 	cat wc.l | go run .
 
-lex.yy.c:
+lex.yy.c: wc.l
 	flex wc.l
 
 clean:
