@@ -7,7 +7,7 @@
 // just like Unix wc
 package main
 
-//#include "lex.h"
+//#include "lex.yy.h"
 //#include "wc.h"
 import "C"
 import (
@@ -44,8 +44,11 @@ func main() {
 		}
 	}
 
-	C.wc_yy_scan_bytes(C.CBytes(content), C.int(len(content)))
-	C.wc_yylex()
+	C.yy_scan_bytes(
+		(*C.char)(C.CBytes(content)),
+		C.yy_size_t(len(content)),
+	)
+	C.yylex()
 
 	fmt.Printf("%8d%8d%8d\n", C.lines, C.words, C.chars)
 }

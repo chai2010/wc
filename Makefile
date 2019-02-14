@@ -2,13 +2,15 @@
 # Use of this source code is governed by a Apache
 # license that can be found in the LICENSE file.
 
-run: lex.yy.c
+run: lex.yy.c lex.yy.h
 	@go fmt
 	@go vet
-	go run .
 
-lex.yy.c: wc.l
-	flex wc.l
+	go run . -f wc.go
+	cat wc.go | go run .
+
+lex.yy.c lex.yy.h: wc.l
+	flex --prefix=yy --header-file=lex.yy.h wc.l
 
 clean:
 	-rm lex.yy.c

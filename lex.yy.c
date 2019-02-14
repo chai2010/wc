@@ -454,11 +454,10 @@ char *yytext;
 /* license that can be found in the LICENSE file. */
 /* just like Unix wc */
 #line 10 "wc.l"
-#include "lex.h"
 #include "wc.h"
 
 #include <string.h>
-#line 462 "lex.yy.c"
+#line 461 "lex.yy.c"
 
 #define INITIAL 0
 
@@ -640,10 +639,10 @@ YY_DECL
 	register char *yy_cp, *yy_bp;
 	register int yy_act;
     
-#line 16 "wc.l"
+#line 15 "wc.l"
 
 
-#line 647 "lex.yy.c"
+#line 646 "lex.yy.c"
 
 	if ( !(yy_init) )
 		{
@@ -728,26 +727,26 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 18 "wc.l"
+#line 17 "wc.l"
 { words++; chars += strlen(yytext); }
 	YY_BREAK
 case 2:
 /* rule 2 can match eol */
 YY_RULE_SETUP
-#line 19 "wc.l"
+#line 18 "wc.l"
 { chars++; lines++; }
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 20 "wc.l"
+#line 19 "wc.l"
 { chars++; }
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 22 "wc.l"
+#line 21 "wc.l"
 ECHO;
 	YY_BREAK
-#line 751 "lex.yy.c"
+#line 750 "lex.yy.c"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -1744,15 +1743,7 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 22 "wc.l"
+#line 21 "wc.l"
 
 
-
-void wc_yy_scan_bytes(const void* p, int len) {
-	yy_scan_bytes(p,len);
-}
-
-int wc_yylex(void) {
-	return yylex();
-}
 

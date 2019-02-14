@@ -18,7 +18,7 @@ int words = 0;
 int lines = 0;
 ```
 
-最重要的是`yylex`函数在`lex.h`文件声明, 函数的实现由flex工具生成:
+最重要的词法分析函数的实现由flex工具生成:
 
 ```c
 extern int yylex(void);
@@ -30,7 +30,6 @@ extern int yylex(void);
 %option noyywrap
 
 %{
-#include "lex.h"
 #include "wc.h"
 %}
 
@@ -46,7 +45,7 @@ extern int yylex(void);
 通过以下命令生成`lex.yy.c`文件(其中包含`yylex`函数的实现):
 
 ```
-$ flex wc.l
+$ flex --prefix=yy --header-file=lex.yy.h wc.l
 ```
 
 然后在Go语言中调用词法分析器并输出结果:
@@ -54,7 +53,7 @@ $ flex wc.l
 ```go
 package main
 
-//#include "lex.h"
+//#include "lex.yy.h"
 //#include "wc.h"
 import "C"
 import "fmt"
@@ -88,26 +87,12 @@ YY_BUFFER_STATE yy_scan_string (yyconst char *yy_str  );
 YY_BUFFER_STATE yy_scan_bytes (yyconst char *bytes,yy_size_t len  );
 ```
 
-因为flex生成的函数在`lex.yy.c`文件，在Go语言中无法直接使用。可以通过自定义函数导出：
-
-```c
-// lex.h
-extern void wc_yy_scan_bytes(const void* p, int len);
-```
-
-```flex
-// wc.l
-void wc_yy_scan_bytes(const void* p, int len) {
-	yy_scan_bytes(p, len);
-}
-```
-
 然后调整Go语言函数：
 
 ```go
 package main
 
-//#include "lex.h"
+//#include "lex.yy.h"
 //#include "wc.h"
 import "C"
 import (
@@ -144,11 +129,14 @@ func main() {
 		}
 	}
 
-	C.wc_yy_scan_bytes(C.CBytes(content), C.int(len(content)))
-	C.wc_yylex()
+	C.yy_scan_bytes(
+		(*C.char)(C.CBytes(content)),
+		C.yy_size_t(len(content)),
+	)
+	C.yylex()
 
 	fmt.Printf("%8d%8d%8d\n", C.lines, C.words, C.chars)
 }
 ```
 
-在调用`C.wc_yylex`函数之前调用`C.wc_yy_scan_bytes`函数用Go语言的切片初始化词法扫描的缓冲区。
+在调用`C.yylex`函数之前调用`C.yy_scan_bytes`函数用Go语言的切片初始化词法扫描的缓冲区。
