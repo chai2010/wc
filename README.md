@@ -1,3 +1,8 @@
+- *赞助 BTC: 1Cbd6oGAUUyBi7X7MaR4np4nTmQZXVgkCW*
+- *赞助 ETH: 0x623A3C3a72186A6336C79b18Ac1eD36e1c71A8a6*
+
+----
+
 # 基于flex实现的wc命令, 单词计数
 
 创建`wc.h`文件, 包含要统计的变量和`yylex`词法解析函数:
